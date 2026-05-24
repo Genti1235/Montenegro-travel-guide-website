@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Map - Montenegro Travel Guide</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:Manrope,system-ui,sans-serif;background:#F4EFE6;color:#1D2528}.story{font-family:Merriweather,Georgia,serif}
+    .region-shape{cursor:pointer;stroke:#fff;stroke-width:4;transition:.2s}.region-shape:hover,.region-shape.active{filter:brightness(1.05) saturate(1.12);stroke:#12313F;stroke-width:5}
+    .map-marker{cursor:pointer;transition:.18s}.map-marker:hover,.map-marker.active{transform:scale(1.25);transform-box:fill-box;transform-origin:center}.place-btn.active,.region-btn.active{background:#12313F;color:white;border-color:#12313F}
+  </style>
+</head>
+<body>
+  <nav class="sticky top-0 z-20 border-b border-[#D8D0C2] bg-[#FFFDF8]/95 backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <a href="../index.html" class="font-extrabold uppercase tracking-wide">Wild Beauty</a>
+      <div class="flex flex-wrap gap-4 text-sm font-bold text-[#0E6F8F]"><a href="map.html">Map</a><a href="bay-of-kotor.html">Kotor</a><a href="7-day-road-trip.html">7-Day Trip</a><a href="transport.html">Transport</a><a href="when-to-visit.html">When to Visit</a></div>
+    </div>
+  </nav>
+
+  <main class="mx-auto max-w-6xl px-6 py-12">
+    <p class="mb-3 text-sm font-bold uppercase tracking-[.25em] text-[#0E6F8F]">Interactive map</p>
+    <h1 class="max-w-4xl text-4xl font-extrabold md:text-6xl">Explore Montenegro by region, town, and attraction</h1>
+    <p class="story mt-5 max-w-3xl text-lg leading-8 text-[#3f484d]">Choose a button or click the map. The matching travel description appears beside the map.</p>
+
+    <section class="mt-8 rounded-2xl bg-[#FFFDF8] p-5 shadow-lg md:p-7">
+      <div class="mb-5">
+        <div class="mb-3 text-xs font-extrabold uppercase tracking-[.18em] text-[#6D7678]">Regions</div>
+        <div id="regionButtons" class="flex flex-wrap gap-2"></div>
+      </div>
+      <div class="mb-6">
+        <div class="mb-3 text-xs font-extrabold uppercase tracking-[.18em] text-[#6D7678]">Places connected to the selected region</div>
+        <div id="placeButtons" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <div class="grid gap-7 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div class="rounded-xl border border-[#D8D0C2] bg-gradient-to-br from-[#eefaff] to-white p-4">
+          <svg viewBox="0 0 560 760" class="h-auto w-full" role="img" aria-label="Interactive Montenegro map">
+            <rect x="0" y="0" width="560" height="760" rx="18" fill="#eaf8ff" />
+            <text x="72" y="690" fill="#1A7FAD" opacity=".55" font-size="24" font-family="Merriweather" transform="rotate(-22 72 690)">Adriatic Sea</text>
+            <path id="north" class="region-shape" data-type="region" data-id="north" fill="#E8F2AD" d="M275 45 C345 65 415 112 438 185 C462 260 420 323 365 356 C314 386 232 373 184 335 C130 292 117 206 151 138 C178 86 217 48 275 45Z"/>
+            <path id="central" class="region-shape" data-type="region" data-id="central" fill="#FFCCCC" d="M188 333 C240 370 318 386 365 356 C395 395 406 454 380 512 C350 579 266 604 197 570 C136 540 112 468 135 405 C146 374 164 350 188 333Z"/>
+            <path id="coast" class="region-shape" data-type="region" data-id="coast" fill="#EBCEF2" d="M122 420 C102 470 100 522 122 578 C146 640 202 690 285 724 C270 744 232 748 184 722 C116 686 63 623 48 553 C35 493 55 438 95 398 C106 388 130 391 122 420Z"/>
+            <path d="M300 610 C330 594 378 604 420 642 C390 662 344 662 306 640Z" fill="#c6ecff" stroke="#0978ab" stroke-width="3"/>
+            <text x="285" y="160" text-anchor="middle" fill="#3D3D3D" font-size="24" font-family="Merriweather" font-weight="700">Northern Region</text>
+            <text x="260" y="470" text-anchor="middle" fill="#3D3D3D" font-size="23" font-family="Merriweather" font-weight="700">Central Region</text>
+            <text x="170" y="645" text-anchor="middle" fill="#3D3D3D" font-size="23" font-family="Merriweather" font-weight="700">Coastal Region</text>
+            <g id="markers"></g>
+          </svg>
+          <div class="mt-4 flex flex-wrap gap-4 text-xs font-bold text-[#3f484d]"><span><span class="inline-block h-3 w-3 rounded-sm bg-[#EBCEF2]"></span> Coastal</span><span><span class="inline-block h-3 w-3 rounded-sm bg-[#FFCCCC]"></span> Central</span><span><span class="inline-block h-3 w-3 rounded-sm bg-[#E8F2AD]"></span> Northern</span><span><span class="text-[#C07820]">◆</span> Clickable place</span></div>
+        </div>
+
+        <aside id="detailPanel" class="rounded-xl border border-[#D8D0C2] bg-white p-6 shadow-md"></aside>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const regions = {
+      coast:{name:'Coastal Region',color:'#EBCEF2',accent:'#8C5AA6',tagline:'Bay of Kotor, old towns, beaches, ports, and Adriatic culture',description:'The Coastal Region combines the Bay of Kotor with the open Adriatic coast: walled old towns, beach resorts, marinas, fishing villages, viewpoints, and southern sandy beaches.',bestFor:'Old towns, beaches, sailing, food, nightlife',bestTime:'May to October'},
+      central:{name:'Central Region',color:'#FFCCCC',accent:'#C46A6A',tagline:'Capital city, royal history, monasteries, karst landscapes, and Lake Skadar',description:'The Central Region connects Podgorica, Zeta, Cetinje, Niksic, Danilovgrad, Tuzi, Lake Skadar, Lovcen, and major cultural and religious landmarks.',bestFor:'Culture, history, city breaks, monasteries, wine, wildlife',bestTime:'April to October'},
+      north:{name:'Northern Region',color:'#E8F2AD',accent:'#6F7F2D',tagline:'Mountains, canyons, national parks, forests, highland villages, and winter sports',description:'The Northern Region is Montenegro mountain and adventure country, with Durmitor, Tara Canyon, Biogradska Gora, Prokletije, rafting, skiing, lakes, and scenic highland towns.',bestFor:'Hiking, rafting, skiing, nature, rural stays',bestTime:'June to September and December to March'}
+    };
+    const places = [
+      {id:'kotor',region:'coast',name:'Kotor Old Town',x:122,y:520,description:'A UNESCO-listed walled town with medieval streets, churches, squares, cats, and fortress stairs above the bay.',highlights:['City walls and Sea Gate','Cathedral of Saint Tryphon','San Giovanni Fortress trail','Museums, churches, and squares']},
+      {id:'perast',region:'coast',name:'Perast and Our Lady of the Rocks',x:136,y:500,description:'A small baroque bay town facing two island churches, usually visited by short boat ride from Perast.',highlights:['Our Lady of the Rocks','Baroque waterfront palaces','Boat trips on the bay','Views toward Verige Strait']},
+      {id:'tivat',region:'coast',name:'Porto Montenegro',x:150,y:575,description:'A polished marina district in Tivat with restaurants, shops, yacht views, and easy airport access.',highlights:['Marina promenade','Restaurants and shopping','Yacht club atmosphere','Tivat waterfront']},
+      {id:'budva',region:'coast',name:'Budva Old Town',x:190,y:625,description:'A compact walled seaside old town with stone lanes, churches, citadel views, beaches, and nightlife nearby.',highlights:['Citadel viewpoint','Churches and lanes','Mogren Beach walk','Restaurants and nightlife']},
+      {id:'sveti-stefan',region:'coast',name:'Sveti Stefan',x:215,y:650,description:'Montenegro iconic island-hotel view, best seen from the coastal road, nearby beaches, and viewpoints.',highlights:['Classic postcard viewpoint','Queen Beach area','Przno and Milocer walks','Sunset photos']},
+      {id:'ulcinj',region:'coast',name:'Ulcinj and Ada Bojana',x:282,y:710,description:'The southern coast has sandy beaches, Ulcinj Old Town, Ada Bojana, seafood restaurants, and kitesurfing areas.',highlights:['Ulcinj Old Town','Velika Plaza','Ada Bojana','Solana birdwatching']},
+      {id:'podgorica',region:'central',name:'Podgorica',x:310,y:500,description:'Montenegro capital is a useful base for food, cafes, nightlife, museums, river walks, airport access, and day trips.',highlights:['Stara Varos and Clock Tower','Millennium Bridge','Gorica hill','Wine routes near the capital']},
+      {id:'ostrog',region:'central',name:'Ostrog Monastery',x:225,y:450,description:'A dramatic Orthodox monastery built into a vertical cliff, one of Montenegro most visited pilgrimage sites.',highlights:['Upper Monastery in the cliff','Pilgrimage route','Valley views','Day trip from Podgorica or Niksic']},
+      {id:'lovcen',region:'central',name:'Lovcen National Park',x:178,y:555,description:'A mountain park above Kotor and Cetinje, famous for the Njegos Mausoleum and wide views over Montenegro.',highlights:['Njegos Mausoleum','Serpentine road views','Cetinje access','Kotor Bay panoramas']},
+      {id:'lake-skadar',region:'central',name:'Lake Skadar National Park',x:350,y:625,description:'The Balkans largest lake area, popular for boat trips, birdwatching, fishing villages, and wine-country drives.',highlights:['Virpazar boat trips','Birdwatching','Rijeka Crnojevica viewpoint','Wine routes']},
+      {id:'durmitor',region:'north',name:'Durmitor National Park',x:245,y:190,description:'A UNESCO-listed mountain park with peaks, glacial lakes, forests, canyons, hiking trails, and winter sports.',highlights:['Black Lake','Savin Kuk','Durmitor ring road','Hiking and ski routes']},
+      {id:'tara',region:'north',name:'Tara Canyon',x:310,y:165,description:'One of Europe deepest river canyons, famous for rafting, the Tara Bridge, and dramatic viewpoints.',highlights:['Rafting trips','Tara Bridge','Zipline viewpoints','Canyon road scenery']},
+      {id:'biogradska',region:'north',name:'Biogradska Gora',x:340,y:320,description:'A compact national park with primeval forest, Biograd Lake, Bjelasica trails, and mountain huts.',highlights:['Biograd Lake','Primeval forest','Bjelasica hiking','Kolasin access']},
+      {id:'prokletije',region:'north',name:'Prokletije National Park',x:405,y:390,description:'Montenegro most dramatic alpine borderland, with jagged peaks, valleys, springs, and demanding hiking routes.',highlights:['Ropojana and Grebaje valleys','Ali Pasha Springs','High alpine hiking','Plav and Gusinje bases']},
+      {id:'piva',region:'north',name:'Piva Lake and Canyon',x:165,y:210,description:'A turquoise lake and canyon road system near Pluzine, often combined with Durmitor or rafting routes.',highlights:['Piva Lake viewpoints','Canyon road tunnels','Piva Monastery','Rafting access']}
+    ];
+    const regionButtons = document.getElementById('regionButtons');
+    const placeButtons = document.getElementById('placeButtons');
+    const detailPanel = document.getElementById('detailPanel');
+    const markers = document.getElementById('markers');
+    let activeRegion = 'coast';
+    let activePlace = null;
+    function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+    function detail(data,type){return `<div class="text-xs font-extrabold uppercase tracking-[.18em] text-[#0E6F8F]">${esc(type)}</div><h2 class="mt-2 text-3xl font-extrabold">${esc(data.name)}</h2><p class="story mt-4 leading-8 text-[#3f484d]">${esc(data.description)}</p>${data.bestFor?`<div class="mt-5 grid gap-3 sm:grid-cols-2"><div class="rounded-lg bg-[#F4EFE6] p-3"><div class="text-[10px] font-extrabold uppercase text-[#6D7678]">Best for</div><div class="mt-1 text-sm font-bold">${esc(data.bestFor)}</div></div><div class="rounded-lg bg-[#F4EFE6] p-3"><div class="text-[10px] font-extrabold uppercase text-[#6D7678]">Best time</div><div class="mt-1 text-sm font-bold">${esc(data.bestTime)}</div></div></div>`:''}${data.highlights?`<div class="mt-6 text-xs font-extrabold uppercase tracking-[.18em] text-[#6D7678]">Highlights</div><ul class="story mt-3 space-y-2 text-sm leading-6 text-[#3f484d]">${data.highlights.map(h=>`<li>• ${esc(h)}</li>`).join('')}</ul>`:''}`}
+    function renderRegions(){regionButtons.innerHTML=Object.entries(regions).map(([id,r])=>`<button class="region-btn rounded-full border border-[#D8D0C2] px-4 py-2 text-sm font-bold" data-region="${id}">${r.name}</button>`).join('');regionButtons.querySelectorAll('button').forEach(btn=>btn.onclick=()=>selectRegion(btn.dataset.region));}
+    function renderPlaces(){const list=places.filter(p=>p.region===activeRegion);placeButtons.innerHTML=list.map(p=>`<button class="place-btn rounded-full border border-[#D8D0C2] px-4 py-2 text-sm font-bold" data-place="${p.id}">${esc(p.name)}</button>`).join('');placeButtons.querySelectorAll('button').forEach(btn=>btn.onclick=()=>selectPlace(btn.dataset.place));}
+    function renderMarkers(){markers.innerHTML=places.map(p=>`<g class="map-marker" data-place="${p.id}"><circle cx="${p.x}" cy="${p.y}" r="13" fill="transparent"></circle><polygon points="${p.x},${p.y-9} ${p.x+4},${p.y-3} ${p.x+11},${p.y-3} ${p.x+6},${p.y+2} ${p.x+8},${p.y+10} ${p.x},${p.y+6} ${p.x-8},${p.y+10} ${p.x-6},${p.y+2} ${p.x-11},${p.y-3} ${p.x-4},${p.y-3}" fill="#C07820" stroke="#fff" stroke-width="3"></polygon><text x="${p.x+15}" y="${p.y+5}" font-size="13" font-weight="700" fill="#1C3040">${esc(p.name.split(' ')[0])}</text></g>`).join('');markers.querySelectorAll('.map-marker').forEach(m=>m.onclick=()=>selectPlace(m.dataset.place));}
+    function updateActive(){document.querySelectorAll('.region-shape').forEach(s=>s.classList.toggle('active',s.dataset.id===activeRegion));document.querySelectorAll('.region-btn').forEach(b=>b.classList.toggle('active',b.dataset.region===activeRegion));document.querySelectorAll('.place-btn').forEach(b=>b.classList.toggle('active',b.dataset.place===activePlace));document.querySelectorAll('.map-marker').forEach(m=>{const p=places.find(x=>x.id===m.dataset.place);m.classList.toggle('active',m.dataset.place===activePlace);m.style.opacity=p.region===activeRegion?'1':'.28';});}
+    function selectRegion(id){activeRegion=id;activePlace=null;renderPlaces();detailPanel.innerHTML=detail(regions[id],'Region overview');updateActive();}
+    function selectPlace(id){const p=places.find(x=>x.id===id);if(!p)return;activeRegion=p.region;activePlace=id;renderPlaces();detailPanel.innerHTML=detail(p,'Selected place');updateActive();}
+    document.querySelectorAll('.region-shape').forEach(shape=>shape.onclick=()=>selectRegion(shape.dataset.id));
+    renderRegions();renderMarkers();selectRegion('coast');
+  </script>
+</body>
+</html>
