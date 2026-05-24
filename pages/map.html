@@ -9,13 +9,13 @@
   <style>
     body{font-family:Manrope,system-ui,sans-serif;background:#F4EFE6;color:#1D2528}.story{font-family:Merriweather,Georgia,serif}
     .map-card{background:#fffdf8;border:1px solid #d8d0c2;box-shadow:0 18px 50px rgba(26,75,107,.12)}
-    .map-wrap{position:relative;max-height:72vh;min-height:520px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(145deg,#eefaff,#f8fcff);border:1px solid #D0E8F0;border-radius:10px}
-    .map-wrap img{display:block;width:auto;height:100%;max-width:100%;object-fit:contain}
+    .map-wrap{position:relative;display:flex;align-items:center;justify-content:center;overflow:visible;background:linear-gradient(145deg,#eefaff,#f8fcff);border:1px solid #D0E8F0;border-radius:10px;padding:12px}
+    .map-wrap img{display:block;width:auto;height:auto;max-width:100%;max-height:68vh;object-fit:contain}
     .pin{position:absolute;transform:translate(-50%,-50%);width:19px;height:19px;border-radius:50%;background:#c07820;border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.25);cursor:pointer;transition:.18s}
     .pin:after{content:"";position:absolute;left:50%;top:50%;width:7px;height:7px;background:#fff;transform:translate(-50%,-50%) rotate(45deg)}
     .pin:hover,.pin.active{transform:translate(-50%,-50%) scale(1.28);background:#E85E35}
     .region-btn.active,.place-btn.active{background:#12313F;color:white;border-color:#12313F}.region-btn,.place-btn{transition:.16s}.region-btn:hover,.place-btn:hover{transform:translateY(-1px)}
-    @media(max-width:1024px){.map-wrap{max-height:none;height:auto;min-height:0}.map-wrap img{width:100%;height:auto}.pin{display:none}}
+    @media(max-width:1024px){.map-wrap img{width:100%;max-height:none}.pin{display:none}}
   </style>
 </head>
 <body>
