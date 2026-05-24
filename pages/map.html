@@ -26,20 +26,18 @@
         .map-section-bg { background:#F4EFE6 !important; border:0 !important; }
         .map-section-bg .w { max-width:1260px !important; padding:28px 32px 40px !important; }
         .section-head { margin-bottom:18px !important; }
-        .map-layout { grid-template-columns:minmax(0, 1fr) 360px !important; gap:26px !important; align-items:start !important; }
+        .map-layout { grid-template-columns:minmax(0, 1fr) 350px !important; gap:40px !important; align-items:start !important; }
         .map-svg-container { width:70% !important; min-width:0 !important; margin:0 auto !important; overflow:visible !important; }
         .map-svg-container svg { width:100% !important; height:auto !important; max-height:none !important; }
-        .map-legend-bar { font-size:10px !important; gap:12px !important; padding:10px 12px !important; }
-        .map-panel { position:static !important; top:auto !important; }
-        .panel-detail { max-height:72vh !important; overflow:auto !important; }
-        .selection-grid { max-height:168px !important; overflow:auto !important; padding-right:3px !important; }
+        .map-panel { position:sticky !important; top:86px !important; }
         .poi-label { font-size:10px !important; paint-order:stroke; stroke:#eefaff; stroke-width:3px; stroke-linejoin:round; }
         .lbl-city, .lbl-town { paint-order:stroke; stroke:#eefaff; stroke-width:3px; stroke-linejoin:round; }
-        .lake-shape { stroke:#006f9d !important; stroke-width:2.7 !important; vector-effect:non-scaling-stroke !important; }
-        .lake-shore { stroke:#006f9d !important; stroke-width:2.7 !important; opacity:1 !important; }
-        .region.selected-muni { stroke:#152535 !important; stroke-width:1.4 !important; }
-        .selected-outline { fill:none !important; stroke:#152535 !important; stroke-width:5.5 !important; stroke-linejoin:round !important; stroke-linecap:round !important; vector-effect:non-scaling-stroke !important; pointer-events:none !important; }
-        @media(max-width:1100px){ .map-layout{grid-template-columns:1fr !important}.map-svg-container{width:82% !important}.panel-detail{max-height:none !important} }
+        .lake-shape { stroke:#ffffff !important; stroke-width:1.8 !important; vector-effect:non-scaling-stroke !important; }
+        .lake-shore { stroke:#ffffff !important; stroke-width:1.8 !important; opacity:1 !important; vector-effect:non-scaling-stroke !important; }
+        .lake-border-line { fill:none !important; stroke:#ffffff !important; stroke-width:1.8 !important; stroke-linecap:round !important; stroke-linejoin:round !important; vector-effect:non-scaling-stroke !important; pointer-events:none !important; }
+        .region.selected-muni { stroke:#152535 !important; stroke-width:1.8 !important; }
+        .selected-outline { fill:none !important; stroke:#152535 !important; stroke-width:1.8 !important; stroke-linejoin:round !important; stroke-linecap:round !important; vector-effect:non-scaling-stroke !important; pointer-events:none !important; }
+        @media(max-width:1024px){ .map-layout{grid-template-columns:1fr !important}.map-panel{position:static !important}.map-svg-container{width:82% !important} }
         @media(max-width:760px){ .map-section-bg .w{padding:20px 16px 32px !important}.map-svg-container{width:100% !important} }
       `;
       doc.head.appendChild(style);
@@ -73,6 +71,14 @@
         movePoiLabel('Biogradska', {x:'462', y:'468', 'text-anchor':'start'});
         movePoiLabel('Prokletije', {x:'632', y:'600', 'text-anchor':'start'});
       }, 250);
+
+      const lakeBorderLayer = doc.createElementNS('http://www.w3.org/2000/svg','g');
+      lakeBorderLayer.setAttribute('id','lakeBorderLayer');
+      const lakeBorder = doc.createElementNS('http://www.w3.org/2000/svg','path');
+      lakeBorder.setAttribute('class','lake-border-line');
+      lakeBorder.setAttribute('d','M354 724 C371 736 387 750 403 766 C420 783 439 797 462 807');
+      lakeBorderLayer.appendChild(lakeBorder);
+      svg.appendChild(lakeBorderLayer);
 
       const layer = doc.createElementNS('http://www.w3.org/2000/svg','g');
       layer.setAttribute('id','selectionOutlineLayer');
