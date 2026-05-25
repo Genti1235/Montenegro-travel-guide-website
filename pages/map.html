@@ -22,9 +22,15 @@
       style.textContent = `
         .topbar, body > nav, .hero, .stories-band, .cards-bg, footer { display:none !important; }
         body { background:#F4EFE6 !important; overflow-x:hidden !important; }
+        body, body *:not(input):not(textarea):not([contenteditable="true"]) { user-select:none !important; -webkit-user-select:none !important; caret-color:transparent !important; }
+        input, textarea, [contenteditable="true"] { user-select:text !important; -webkit-user-select:text !important; caret-color:auto !important; cursor:text !important; }
         main { display:block !important; }
+        a, button, .region, .map-poi, [data-select-type] { cursor:pointer !important; }
+        p, h1, h2, h3, h4, h5, h6, span, div, li, text, .map-label, .town-label, .attr-label, .lbl-region, .lbl-capital, .lbl-city, .lbl-town, .lbl-attr, .poi-label { cursor:default !important; }
         .map-section-bg { background:#F4EFE6 !important; border:0 !important; }
         .map-section-bg .w { max-width:1260px !important; padding:28px 32px 40px !important; }
+        .site-back-link { display:inline-flex !important; align-items:center !important; justify-content:center !important; min-height:38px !important; margin:0 0 18px !important; padding:0 16px !important; border:1px solid #DDD4BC !important; border-radius:999px !important; background:#FFFDF8 !important; color:#1A4B6B !important; font-size:12px !important; font-weight:800 !important; letter-spacing:.08em !important; text-transform:uppercase !important; box-shadow:0 8px 20px rgba(26,75,107,.08) !important; transition:transform .18s, box-shadow .18s, background .18s !important; cursor:pointer !important; }
+        .site-back-link:hover { background:#fff !important; transform:translateY(-1px) !important; box-shadow:0 12px 28px rgba(26,75,107,.12) !important; }
         .section-head { margin-bottom:18px !important; }
         .map-layout { grid-template-columns:minmax(0, 1fr) 350px !important; gap:40px !important; align-items:start !important; }
         .map-svg-container { width:70% !important; min-width:0 !important; margin:0 auto !important; overflow:visible !important; }
@@ -34,13 +40,23 @@
         .lbl-city, .lbl-town { paint-order:stroke; stroke:#eefaff; stroke-width:3px; stroke-linejoin:round; }
         .lake-shape { stroke:#ffffff !important; stroke-width:1.8 !important; vector-effect:non-scaling-stroke !important; }
         .lake-shore { stroke:#ffffff !important; stroke-width:1.8 !important; opacity:1 !important; vector-effect:non-scaling-stroke !important; }
-        .lake-border-line { fill:none !important; stroke:#ffffff !important; stroke-width:1.8 !important; stroke-linecap:round !important; stroke-linejoin:round !important; vector-effect:non-scaling-stroke !important; pointer-events:none !important; }
+        .lake-border-line { fill:none !important; stroke:#2a6699 !important; stroke-width:1.8 !important; stroke-linecap:round !important; stroke-linejoin:round !important; vector-effect:non-scaling-stroke !important; pointer-events:none !important; }
         .region.selected-muni { stroke:#152535 !important; stroke-width:1.8 !important; }
         .selected-outline { fill:none !important; stroke:#152535 !important; stroke-width:1.8 !important; stroke-linejoin:round !important; stroke-linecap:round !important; vector-effect:non-scaling-stroke !important; pointer-events:none !important; }
         @media(max-width:1024px){ .map-layout{grid-template-columns:1fr !important}.map-panel{position:static !important}.map-svg-container{width:82% !important} }
-        @media(max-width:760px){ .map-section-bg .w{padding:20px 16px 32px !important}.map-svg-container{width:100% !important} }
+        @media(max-width:760px){ .map-section-bg .w{padding:20px 16px 32px !important}.map-svg-container{width:100% !important}.site-back-link{width:100% !important} }
       `;
       doc.head.appendChild(style);
+
+      const mapWrap = doc.querySelector('.map-section-bg .w');
+      if (mapWrap && !doc.querySelector('.site-back-link')) {
+        const backLink = doc.createElement('a');
+        backLink.className = 'site-back-link';
+        backLink.href = '../index.html';
+        backLink.target = '_top';
+        backLink.textContent = 'Back to main page';
+        mapWrap.insertBefore(backLink, mapWrap.firstChild);
+      }
 
       const svg = doc.getElementById('montenegroMap');
       if (!svg) return;
@@ -76,7 +92,7 @@
       lakeBorderLayer.setAttribute('id','lakeBorderLayer');
       const lakeBorder = doc.createElementNS('http://www.w3.org/2000/svg','path');
       lakeBorder.setAttribute('class','lake-border-line');
-      lakeBorder.setAttribute('d','M354 724 C371 736 387 750 403 766 C420 783 439 797 462 807');
+      lakeBorder.setAttribute('d','M378.7,775.4 L404.9,745.6');
       lakeBorderLayer.appendChild(lakeBorder);
       svg.appendChild(lakeBorderLayer);
 
