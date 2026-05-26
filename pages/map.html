@@ -25,8 +25,8 @@
         body, body *:not(input):not(textarea):not([contenteditable="true"]) { user-select:none !important; -webkit-user-select:none !important; caret-color:transparent !important; }
         input, textarea, [contenteditable="true"] { user-select:text !important; -webkit-user-select:text !important; caret-color:auto !important; cursor:text !important; }
         main { display:block !important; }
-        a, button, .region, .map-poi, [data-select-type] { cursor:pointer !important; }
-        p, h1, h2, h3, h4, h5, h6, span, div, li, text, .map-label, .town-label, .attr-label, .lbl-region, .lbl-capital, .lbl-city, .lbl-town, .lbl-attr, .poi-label { cursor:default !important; }
+        a, button, button *, .region, .map-poi, [data-select-type], [data-select-type] * { cursor:pointer !important; }
+        p, h1, h2, h3, h4, h5, h6, div, li, text, .map-label, .town-label, .attr-label, .lbl-region, .lbl-capital, .lbl-city, .lbl-town, .lbl-attr, .poi-label { cursor:default !important; }
         .map-section-bg { background:#F4EFE6 !important; border:0 !important; }
         .map-section-bg .w { max-width:1260px !important; padding:28px 32px 40px !important; }
         .site-back-link { display:inline-flex !important; align-items:center !important; justify-content:center !important; min-height:38px !important; margin:0 0 18px !important; padding:0 16px !important; border:1px solid #DDD4BC !important; border-radius:999px !important; background:#FFFDF8 !important; color:#1A4B6B !important; font-size:12px !important; font-weight:800 !important; letter-spacing:.08em !important; text-transform:uppercase !important; box-shadow:0 8px 20px rgba(26,75,107,.08) !important; transition:transform .18s, box-shadow .18s, background .18s !important; cursor:pointer !important; }
@@ -38,9 +38,13 @@
         .map-panel { position:sticky !important; top:86px !important; }
         .poi-label { font-size:10px !important; paint-order:stroke; stroke:#eefaff; stroke-width:3px; stroke-linejoin:round; }
         .lbl-city, .lbl-town { paint-order:stroke; stroke:#eefaff; stroke-width:3px; stroke-linejoin:round; }
-        .lake-shape { stroke:#ffffff !important; stroke-width:1.8 !important; vector-effect:non-scaling-stroke !important; }
+        .lake-shape { fill:#c6ecff !important; stroke:#ffffff !important; stroke-width:1.8 !important; vector-effect:non-scaling-stroke !important; }
+        .lake-selectable { pointer-events:all !important; cursor:pointer !important; }
+        .lake-selectable:hover { filter:brightness(1.04) saturate(1.08) !important; }
+        .lake-albania-part { fill:#b8ceda !important; stroke:none !important; opacity:.96 !important; pointer-events:none !important; }
+        .lake-country-border { fill:none !important; stroke:#ffffff !important; stroke-width:1.8 !important; stroke-linecap:round !important; stroke-linejoin:round !important; vector-effect:non-scaling-stroke !important; pointer-events:none !important; }
         .lake-shore { stroke:#ffffff !important; stroke-width:1.8 !important; opacity:1 !important; vector-effect:non-scaling-stroke !important; }
-        .lake-border-line { fill:none !important; stroke:#2a6699 !important; stroke-width:1.8 !important; stroke-linecap:round !important; stroke-linejoin:round !important; vector-effect:non-scaling-stroke !important; pointer-events:none !important; }
+        .lake-border-line { display:none !important; }
         .region.selected-muni { stroke:#152535 !important; stroke-width:1.8 !important; }
         .selected-outline { fill:none !important; stroke:#152535 !important; stroke-width:1.8 !important; stroke-linejoin:round !important; stroke-linecap:round !important; vector-effect:non-scaling-stroke !important; pointer-events:none !important; }
         @media(max-width:1024px){ .map-layout{grid-template-columns:1fr !important}.map-panel{position:static !important}.map-svg-container{width:82% !important} }
@@ -88,13 +92,119 @@
         movePoiLabel('Prokletije', {x:'632', y:'600', 'text-anchor':'start'});
       }, 250);
 
-      const lakeBorderLayer = doc.createElementNS('http://www.w3.org/2000/svg','g');
-      lakeBorderLayer.setAttribute('id','lakeBorderLayer');
-      const lakeBorder = doc.createElementNS('http://www.w3.org/2000/svg','path');
-      lakeBorder.setAttribute('class','lake-border-line');
-      lakeBorder.setAttribute('d','M378.7,775.4 L404.9,745.6');
-      lakeBorderLayer.appendChild(lakeBorder);
-      svg.appendChild(lakeBorderLayer);
+      const lakePatch = doc.createElement('script');
+      lakePatch.textContent = `
+        (() => {
+          if (window.__lakeSkadarPatchApplied) return;
+          window.__lakeSkadarPatchApplied = true;
+
+          const lakeId = 'ME-LAKE-SKADAR';
+          const lake = document.getElementById('lake-skadar-shape');
+          const svg = document.getElementById('montenegroMap');
+          if (!lake || !svg) return;
+
+          if (typeof municipalityData !== 'undefined') {
+            municipalityData[lakeId] = {
+              name:'Lake Skadar',
+              region:'central',
+              description:'The largest lake in the Balkans, shared by Montenegro and Albania. The Montenegro side is shown in brighter blue, while the Albania side is shown in duller blue.',
+              highlights:['Montenegro side for Virpazar boat trips','Birdwatching and wetlands','Border line shown inside the lake','Wine routes and fishing villages','Albanian side shown in dull blue'],
+              bestFor:'boat trips, wildlife, lake views'
+            };
+          }
+          if (typeof regionData !== 'undefined' && regionData.central && !regionData.central.municipalities.includes(lakeId)) {
+            regionData.central.municipalities.push(lakeId);
+          }
+          if (typeof attractionData !== 'undefined' && attractionData['lake-skadar']) {
+            delete attractionData['lake-skadar'];
+          }
+          const oldLakePoi = document.querySelector('.map-poi[data-poi-id="lake-skadar"]');
+          if (oldLakePoi) oldLakePoi.remove();
+
+          lake.classList.add('region','central','lake-selectable');
+          lake.dataset.region = 'central';
+          lake.dataset.name = 'Lake Skadar';
+          lake.dataset.muniId = lakeId;
+          lake.setAttribute('tabindex','-1');
+          lake.setAttribute('role','button');
+          lake.setAttribute('aria-label','Lake Skadar');
+
+          let defs = svg.querySelector('defs');
+          if (!defs) {
+            defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+            svg.insertBefore(defs, svg.firstChild);
+          }
+          const oldClip = document.getElementById('lakeSkadarClip');
+          if (oldClip) oldClip.remove();
+          const clip = document.createElementNS('http://www.w3.org/2000/svg','clipPath');
+          clip.setAttribute('id','lakeSkadarClip');
+          const clipPath = document.createElementNS('http://www.w3.org/2000/svg','path');
+          clipPath.setAttribute('d', lake.getAttribute('d'));
+          clip.appendChild(clipPath);
+          defs.appendChild(clip);
+
+          document.getElementById('lake-skadar-albania')?.remove();
+          document.getElementById('lake-skadar-country-border')?.remove();
+
+          const albaniaPart = document.createElementNS('http://www.w3.org/2000/svg','path');
+          albaniaPart.setAttribute('id','lake-skadar-albania');
+          albaniaPart.setAttribute('class','lake-albania-part');
+          albaniaPart.setAttribute('clip-path','url(#lakeSkadarClip)');
+          albaniaPart.setAttribute('d','M392 690 L478 690 L478 852 L404 852 C418 829 419 808 411 787 C402 765 394 744 391 721 C390 708 391 698 392 690 Z');
+
+          const countryBorder = document.createElementNS('http://www.w3.org/2000/svg','path');
+          countryBorder.setAttribute('id','lake-skadar-country-border');
+          countryBorder.setAttribute('class','lake-country-border');
+          countryBorder.setAttribute('clip-path','url(#lakeSkadarClip)');
+          countryBorder.setAttribute('d','M392 700 C391 724 397 747 407 772 C417 797 420 821 405 842');
+
+          lake.parentNode.insertBefore(albaniaPart, lake.nextSibling);
+          lake.parentNode.insertBefore(countryBorder, albaniaPart.nextSibling);
+
+          function setLakeSelected(active){
+            lake.classList.toggle('selected-muni', active);
+            const button = document.querySelector('[data-select-type="municipality"][data-select-id="' + lakeId + '"]');
+            if (button) button.classList.toggle('active', active);
+          }
+          function selectLake(){
+            if (typeof selectMunicipality === 'function') selectMunicipality(lakeId);
+            setTimeout(() => setLakeSelected(true), 0);
+          }
+          lake.addEventListener('mouseenter', event => {
+            if (typeof setRegionFocus === 'function') setRegionFocus('central');
+            const tooltip = document.getElementById('mapTooltip');
+            if (tooltip && typeof regionData !== 'undefined') {
+              tooltip.style.opacity = '1';
+              tooltip.style.borderLeft = '3px solid ' + regionData.central.color;
+              tooltip.textContent = 'Lake Skadar · Central Region';
+            }
+          });
+          lake.addEventListener('mousemove', event => { if (typeof positionTooltip === 'function') positionTooltip(event); });
+          lake.addEventListener('mouseleave', () => {
+            const tooltip = document.getElementById('mapTooltip');
+            if (tooltip) tooltip.style.opacity = '0';
+            const panelRegion = document.getElementById('panelRegion');
+            if (panelRegion && panelRegion.style.display !== 'block' && typeof clearFocus === 'function') clearFocus();
+            else if (typeof currentRegion !== 'undefined' && currentRegion && typeof setRegionFocus === 'function') setRegionFocus(currentRegion, true);
+          });
+          lake.addEventListener('click', () => { selectLake(); if (document.activeElement) document.activeElement.blur(); });
+
+          document.addEventListener('click', event => {
+            const selectButton = event.target.closest && event.target.closest('[data-select-type]');
+            const regionShape = event.target.closest && event.target.closest('.region');
+            const panelBack = event.target.closest && event.target.closest('#panelBack');
+            if (selectButton) {
+              const isLakeButton = selectButton.dataset.selectType === 'municipality' && selectButton.dataset.selectId === lakeId;
+              setTimeout(() => setLakeSelected(isLakeButton), 0);
+              return;
+            }
+            if (panelBack || (regionShape && regionShape !== lake) || (event.target.closest && event.target.closest('.map-poi'))) {
+              setLakeSelected(false);
+            }
+          }, true);
+        })();
+      `;
+      doc.body.appendChild(lakePatch);
 
       const layer = doc.createElementNS('http://www.w3.org/2000/svg','g');
       layer.setAttribute('id','selectionOutlineLayer');
@@ -107,6 +217,7 @@
           const clone = path.cloneNode(false);
           clone.removeAttribute('id');
           clone.removeAttribute('class');
+          clone.removeAttribute('clip-path');
           clone.setAttribute('class','selected-outline');
           layer.appendChild(clone);
         });
