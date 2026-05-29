@@ -9,70 +9,251 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Manrope, system-ui, sans-serif; background: #F4EFE6; color: #1D2528; }
-    .story { font-family: Merriweather, Georgia, serif; }
+    :root{--cream:#F4EFE6;--paper:#FFFDF8;--ink:#1D2528;--muted:#566367;--teal:#0E6F8F;--deep:#12313F;--gold:#D4A62A;--line:#D8D0C2;--green:#1F5A43;--red:#C8102E}
+    html{scroll-behavior:smooth}
+    body{font-family:Manrope,system-ui,sans-serif;background:var(--cream);color:var(--ink);animation:pageIn .28s ease-out}
+    .story{font-family:Merriweather,Georgia,serif}
+    .nav-open{display:flex}
+    .page-link{transition:color .18s,background .18s,transform .18s}
+    .page-link:hover{color:var(--gold)}
+    .guide-card{transition:transform .2s,box-shadow .2s,border-color .2s}
+    .guide-card:hover{transform:translateY(-3px);box-shadow:0 18px 42px rgba(18,49,63,.14);border-color:#bfc8c8}
+    .guide-card[hidden]{display:none}
+    .result-enter{animation:fadeUp .22s ease-out}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pageIn{from{opacity:.35}to{opacity:1}}
   </style>
 </head>
 <body>
-  <header class="relative min-h-[84vh] bg-cover bg-center text-white" style="background-image: linear-gradient(rgba(18,49,63,.38), rgba(18,49,63,.72)), url('https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?auto=format&fit=crop&w=1800&q=80');">
-    <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-      <a href="index.html" class="text-xl font-extrabold uppercase tracking-wide">Wild Beauty</a>
+  <header class="relative min-h-[92vh] bg-cover bg-center text-white" style="background-image:linear-gradient(rgba(18,49,63,.42),rgba(18,49,63,.80)),url('https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?auto=format&fit=crop&w=1800&q=80');">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:px-6">
+      <a href="index.html" class="text-lg font-extrabold uppercase tracking-wide md:text-xl">Wild Beauty</a>
+      <button id="menuButton" class="rounded-md border border-white/50 px-3 py-2 text-sm font-bold md:hidden" type="button" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
       <div class="hidden gap-6 text-sm font-semibold md:flex">
-        <a href="pages/map.html" class="hover:text-[#D4A62A]">Map</a>
-        <a href="pages/bay-of-kotor.html" class="hover:text-[#D4A62A]">Bay of Kotor</a>
-        <a href="pages/7-day-road-trip.html" class="hover:text-[#D4A62A]">7-Day Trip</a>
-        <a href="pages/transport.html" class="hover:text-[#D4A62A]">Transport</a>
-        <a href="pages/when-to-visit.html" class="hover:text-[#D4A62A]">When to Visit</a>
+        <a href="pages/map.html" class="page-link">Map</a>
+        <a href="pages/bay-of-kotor.html" class="page-link">Kotor</a>
+        <a href="pages/7-day-road-trip.html" class="page-link">7-Day Trip</a>
+        <a href="pages/transport.html" class="page-link">Transport</a>
+        <a href="pages/when-to-visit.html" class="page-link">When to Visit</a>
+        <a href="#planner" class="page-link">Trip Builder</a>
       </div>
     </nav>
-    <section class="mx-auto flex max-w-6xl flex-col justify-end px-6 pb-20 pt-28">
-      <p class="mb-4 text-sm font-bold uppercase tracking-[.25em] text-[#D4A62A]">Montenegro travel guide</p>
-      <h1 class="max-w-3xl text-5xl font-extrabold leading-tight md:text-7xl">Discover Montenegro's coast, mountains, lakes, and old towns.</h1>
-      <p class="story mt-6 max-w-2xl text-lg leading-8 text-white/90">A connected guide for planning a beautiful Montenegro trip, from Kotor and the Adriatic coast to road trips, transport, and the best seasons to travel.</p>
-      <div class="mt-8 flex flex-wrap gap-3">
-        <a href="pages/map.html" class="rounded-full bg-[#0E6F8F] px-6 py-3 font-bold text-white shadow-lg">Open interactive map</a>
-        <a href="pages/7-day-road-trip.html" class="rounded-full border border-white/70 px-6 py-3 font-bold text-white hover:bg-white/10">Start with itinerary</a>
+    <div id="mobileMenu" class="mx-5 hidden flex-col gap-2 rounded-lg border border-white/20 bg-[#12313F]/95 p-4 text-sm font-bold shadow-xl md:hidden">
+      <a href="pages/map.html" class="rounded-md px-3 py-2 hover:bg-white/10">Map</a>
+      <a href="pages/bay-of-kotor.html" class="rounded-md px-3 py-2 hover:bg-white/10">Bay of Kotor</a>
+      <a href="pages/7-day-road-trip.html" class="rounded-md px-3 py-2 hover:bg-white/10">7-Day Trip</a>
+      <a href="pages/transport.html" class="rounded-md px-3 py-2 hover:bg-white/10">Transport</a>
+      <a href="pages/when-to-visit.html" class="rounded-md px-3 py-2 hover:bg-white/10">When to Visit</a>
+      <a href="#planner" class="rounded-md px-3 py-2 hover:bg-white/10">Trip Builder</a>
+    </div>
+
+    <section class="mx-auto flex max-w-6xl flex-col justify-end px-5 pb-14 pt-24 md:px-6 md:pb-20 md:pt-28">
+      <p class="mb-4 text-xs font-bold uppercase tracking-[.25em] text-[#D4A62A] md:text-sm">Montenegro travel guide</p>
+      <h1 class="max-w-3xl text-4xl font-extrabold leading-tight md:text-7xl">Plan Montenegro by map, route, season, and travel style.</h1>
+      <p class="story mt-6 max-w-2xl text-base leading-8 text-white/90 md:text-lg">A connected guide for exploring Kotor, Lake Skadar, the coast, mountain roads, transport choices, and the best months to travel.</p>
+      <form id="heroSearchForm" class="mt-8 flex max-w-2xl flex-col gap-3 sm:flex-row" role="search">
+        <input id="heroSearch" class="min-h-12 flex-1 rounded-md border border-white/30 bg-white/95 px-4 font-semibold text-[#1D2528] outline-none placeholder:text-[#69777b]" type="search" placeholder="Search Kotor, lake, road trip, transport..." autocomplete="off">
+        <button class="min-h-12 rounded-md bg-[#D4A62A] px-6 font-extrabold text-[#12313F]" type="submit">Search</button>
+      </form>
+      <div class="mt-5 flex flex-wrap gap-3">
+        <a href="pages/map.html" class="rounded-md bg-[#0E6F8F] px-5 py-3 font-bold text-white shadow-lg transition hover:-translate-y-0.5">Open interactive map</a>
+        <a href="#planner" class="rounded-md border border-white/70 px-5 py-3 font-bold text-white transition hover:bg-white/10">Build sample route</a>
       </div>
     </section>
   </header>
 
-  <main class="mx-auto max-w-6xl px-6 py-16">
-    <section class="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
-      <a href="pages/map.html" class="rounded-xl bg-[#FFFDF8] p-6 shadow-md transition hover:-translate-y-1 hover:shadow-xl">
-        <p class="text-sm font-bold uppercase tracking-widest text-[#0E6F8F]">Interactive</p>
-        <h2 class="mt-3 text-2xl font-extrabold">Montenegro Map</h2>
-        <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Click regions and places to see the connected travel descriptions.</p>
-      </a>
-      <a href="pages/bay-of-kotor.html" class="rounded-xl bg-[#FFFDF8] p-6 shadow-md transition hover:-translate-y-1 hover:shadow-xl">
-        <p class="text-sm font-bold uppercase tracking-widest text-[#0E6F8F]">Destination</p>
-        <h2 class="mt-3 text-2xl font-extrabold">Bay of Kotor</h2>
-        <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Medieval towns, blue water, mountain views, and the classic first stop for Montenegro.</p>
-      </a>
-      <a href="pages/7-day-road-trip.html" class="rounded-xl bg-[#FFFDF8] p-6 shadow-md transition hover:-translate-y-1 hover:shadow-xl">
-        <p class="text-sm font-bold uppercase tracking-widest text-[#1F5A43]">Itinerary</p>
-        <h2 class="mt-3 text-2xl font-extrabold">7-Day Road Trip</h2>
-        <p class="story mt-3 text-sm leading-6 text-[#3f484d]">A day-by-day route linking coast, national parks, canyons, and lake country.</p>
-      </a>
-      <a href="pages/transport.html" class="rounded-xl bg-[#FFFDF8] p-6 shadow-md transition hover:-translate-y-1 hover:shadow-xl">
-        <p class="text-sm font-bold uppercase tracking-widest text-[#744300]">Practical</p>
-        <h2 class="mt-3 text-2xl font-extrabold">Buses and Car Rentals</h2>
-        <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Understand when to drive, when to use buses, and how to avoid awkward transfers.</p>
-      </a>
-      <a href="pages/when-to-visit.html" class="rounded-xl bg-[#FFFDF8] p-6 shadow-md transition hover:-translate-y-1 hover:shadow-xl">
-        <p class="text-sm font-bold uppercase tracking-widest text-[#C8102E]">Planning</p>
-        <h2 class="mt-3 text-2xl font-extrabold">When to Visit</h2>
-        <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Pick the right month for beaches, hiking, fewer crowds, or better prices.</p>
-      </a>
+  <main>
+    <section id="guide" class="mx-auto max-w-6xl px-5 py-12 md:px-6 md:py-16">
+      <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-[.24em] text-[#0E6F8F]">Explore the guide</p>
+          <h2 class="mt-2 text-3xl font-extrabold md:text-4xl">Find the right starting point</h2>
+          <p class="story mt-3 max-w-2xl leading-7 text-[#566367]">Use search or the filters to jump straight into the part of Montenegro you are planning.</p>
+        </div>
+        <div class="flex flex-wrap gap-2" aria-label="Guide filters">
+          <button class="filter-btn rounded-md border border-[#D8D0C2] bg-[#FFFDF8] px-3 py-2 text-sm font-bold" type="button" data-filter="">All</button>
+          <button class="filter-btn rounded-md border border-[#D8D0C2] bg-[#FFFDF8] px-3 py-2 text-sm font-bold" type="button" data-filter="coast">Coast</button>
+          <button class="filter-btn rounded-md border border-[#D8D0C2] bg-[#FFFDF8] px-3 py-2 text-sm font-bold" type="button" data-filter="lake">Lake</button>
+          <button class="filter-btn rounded-md border border-[#D8D0C2] bg-[#FFFDF8] px-3 py-2 text-sm font-bold" type="button" data-filter="mountains">Mountains</button>
+          <button class="filter-btn rounded-md border border-[#D8D0C2] bg-[#FFFDF8] px-3 py-2 text-sm font-bold" type="button" data-filter="practical">Practical</button>
+        </div>
+      </div>
+
+      <p id="searchStatus" class="mt-6 text-sm font-bold text-[#566367]" aria-live="polite">Showing all guide sections.</p>
+
+      <div id="guideGrid" class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="pages/map.html" class="guide-card rounded-lg border border-[#D8D0C2] bg-[#FFFDF8] p-6 shadow-sm" data-keywords="interactive map regions municipalities lake skadar coast mountains attractions">
+          <p class="text-xs font-extrabold uppercase tracking-widest text-[#0E6F8F]">Interactive</p>
+          <h3 class="mt-3 text-2xl font-extrabold">Montenegro Map</h3>
+          <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Click regions, municipalities, Lake Skadar, and attractions to see travel descriptions.</p>
+        </a>
+        <a href="pages/bay-of-kotor.html" class="guide-card rounded-lg border border-[#D8D0C2] bg-[#FFFDF8] p-6 shadow-sm" data-keywords="bay kotor coast perast tivat old town beaches">
+          <p class="text-xs font-extrabold uppercase tracking-widest text-[#0E6F8F]">Destination</p>
+          <h3 class="mt-3 text-2xl font-extrabold">Bay of Kotor</h3>
+          <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Medieval towns, calm water, mountain views, and the classic first stop.</p>
+        </a>
+        <a href="pages/7-day-road-trip.html" class="guide-card rounded-lg border border-[#D8D0C2] bg-[#FFFDF8] p-6 shadow-sm" data-keywords="road trip itinerary mountains durmitor tara lovcen lake coast">
+          <p class="text-xs font-extrabold uppercase tracking-widest text-[#1F5A43]">Itinerary</p>
+          <h3 class="mt-3 text-2xl font-extrabold">7-Day Road Trip</h3>
+          <p class="story mt-3 text-sm leading-6 text-[#3f484d]">A day-by-day route linking coast, national parks, canyons, and lake country.</p>
+        </a>
+        <a href="pages/transport.html" class="guide-card rounded-lg border border-[#D8D0C2] bg-[#FFFDF8] p-6 shadow-sm" data-keywords="transport practical bus rental car taxi transfer airport">
+          <p class="text-xs font-extrabold uppercase tracking-widest text-[#744300]">Practical</p>
+          <h3 class="mt-3 text-2xl font-extrabold">Transport</h3>
+          <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Compare buses, rental cars, airport transfers, and mountain driving.</p>
+        </a>
+        <a href="pages/when-to-visit.html" class="guide-card rounded-lg border border-[#D8D0C2] bg-[#FFFDF8] p-6 shadow-sm" data-keywords="season weather crowds beach hiking prices practical">
+          <p class="text-xs font-extrabold uppercase tracking-widest text-[#C8102E]">Planning</p>
+          <h3 class="mt-3 text-2xl font-extrabold">When to Visit</h3>
+          <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Choose the best month for beaches, hiking, fewer crowds, or better prices.</p>
+        </a>
+        <a href="pages/map.html" class="guide-card rounded-lg border border-[#D8D0C2] bg-[#FFFDF8] p-6 shadow-sm" data-keywords="lake skadar virpazar boat birds wine albania central">
+          <p class="text-xs font-extrabold uppercase tracking-widest text-[#0E6F8F]">Lake</p>
+          <h3 class="mt-3 text-2xl font-extrabold">Lake Skadar</h3>
+          <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Use the map to select the lake and compare the Montenegro and Albania sides.</p>
+        </a>
+      </div>
     </section>
 
-    <section class="mt-16 rounded-2xl bg-[#12313F] p-8 text-white md:p-12">
-      <h2 class="text-3xl font-extrabold">How the guide is connected</h2>
-      <p class="story mt-4 max-w-3xl leading-8 text-white/85">The homepage points visitors toward the main jobs they need done: explore the interactive map, choose a destination, plan an itinerary, understand transport, and pick the best travel season. Each page links back to the others so the website feels like one guide instead of separate loose pages.</p>
+    <section id="planner" class="border-y border-[#D8D0C2] bg-[#FFFDF8]">
+      <div class="mx-auto grid max-w-6xl gap-8 px-5 py-12 md:px-6 md:py-16 lg:grid-cols-[1fr_1.1fr]">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-[.24em] text-[#1F5A43]">Trip builder</p>
+          <h2 class="mt-2 text-3xl font-extrabold md:text-4xl">Create a sample Montenegro route</h2>
+          <p class="story mt-4 leading-7 text-[#566367]">Choose your travel style and the page will build a simple route preview. It is a demo, but it behaves like a real planning tool.</p>
+        </div>
+        <form id="plannerForm" class="rounded-lg border border-[#D8D0C2] bg-[#F4EFE6] p-5 shadow-sm md:p-6">
+          <div class="grid gap-4 sm:grid-cols-3">
+            <label class="text-sm font-bold">Days
+              <select id="tripDays" class="mt-2 w-full rounded-md border border-[#D8D0C2] bg-white px-3 py-3">
+                <option value="3">3 days</option>
+                <option value="5">5 days</option>
+                <option value="7" selected>7 days</option>
+              </select>
+            </label>
+            <label class="text-sm font-bold">Transport
+              <select id="tripTransport" class="mt-2 w-full rounded-md border border-[#D8D0C2] bg-white px-3 py-3">
+                <option value="car">Rental car</option>
+                <option value="mixed">Bus + transfers</option>
+              </select>
+            </label>
+            <label class="text-sm font-bold">Focus
+              <select id="tripFocus" class="mt-2 w-full rounded-md border border-[#D8D0C2] bg-white px-3 py-3">
+                <option value="balanced">Balanced</option>
+                <option value="coast">Coast</option>
+                <option value="nature">Nature</option>
+                <option value="culture">Culture</option>
+              </select>
+            </label>
+          </div>
+          <button class="mt-5 w-full rounded-md bg-[#12313F] px-5 py-3 font-extrabold text-white transition hover:bg-[#0E6F8F]" type="submit">Build route preview</button>
+          <div id="planResult" class="result-enter mt-5 rounded-lg border border-[#D8D0C2] bg-white p-5">
+            <p class="text-sm font-extrabold uppercase tracking-widest text-[#0E6F8F]">Suggested route</p>
+            <h3 class="mt-2 text-2xl font-extrabold">Kotor, Lake Skadar, Durmitor</h3>
+            <p class="story mt-2 text-sm leading-6 text-[#566367]">A balanced 7-day route works best by rental car: start in Kotor, continue through Lovcen and Lake Skadar, then drive north to Durmitor and Tara Canyon.</p>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-5 py-12 md:px-6 md:py-16">
+      <div class="grid gap-5 md:grid-cols-3">
+        <div class="rounded-lg bg-[#12313F] p-6 text-white">
+          <h2 class="text-2xl font-extrabold">1. Explore visually</h2>
+          <p class="story mt-3 text-sm leading-6 text-white/80">Start with the interactive map to understand regions, municipalities, Lake Skadar, and attractions.</p>
+        </div>
+        <div class="rounded-lg bg-[#FFFDF8] p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold">2. Choose a route</h2>
+          <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Use the itinerary and transport guide to decide whether a car, bus, or transfer plan makes sense.</p>
+        </div>
+        <div class="rounded-lg bg-[#FFFDF8] p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold">3. Match the season</h2>
+          <p class="story mt-3 text-sm leading-6 text-[#3f484d]">Check when to visit so beaches, hikes, crowds, and prices fit your trip.</p>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer class="border-t border-[#D8D0C2] px-6 py-8 text-center text-sm text-[#6D7678]">
     Montenegro Travel Guide - connected by Codex
   </footer>
+
+  <script>
+    const menuButton = document.getElementById('menuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuButton?.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('nav-open');
+      mobileMenu.classList.toggle('hidden', !open);
+      menuButton.setAttribute('aria-expanded', String(open));
+    });
+
+    const searchInput = document.getElementById('heroSearch');
+    const searchForm = document.getElementById('heroSearchForm');
+    const cards = Array.from(document.querySelectorAll('.guide-card'));
+    const status = document.getElementById('searchStatus');
+    const filterButtons = Array.from(document.querySelectorAll('.filter-btn'));
+
+    function runSearch(value) {
+      const query = value.trim().toLowerCase();
+      let shown = 0;
+      cards.forEach(card => {
+        const haystack = (card.textContent + ' ' + card.dataset.keywords).toLowerCase();
+        const match = !query || haystack.includes(query);
+        card.hidden = !match;
+        if (match) shown += 1;
+      });
+      status.textContent = query ? `Showing ${shown} result${shown === 1 ? '' : 's'} for "${query}".` : 'Showing all guide sections.';
+      document.getElementById('guide').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    searchForm?.addEventListener('submit', event => {
+      event.preventDefault();
+      runSearch(searchInput.value);
+    });
+    searchInput?.addEventListener('input', () => runSearch(searchInput.value));
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        searchInput.value = button.dataset.filter || '';
+        runSearch(searchInput.value);
+      });
+    });
+
+    const plannerForm = document.getElementById('plannerForm');
+    const planResult = document.getElementById('planResult');
+    const routes = {
+      balanced: {
+        title: 'Kotor, Lake Skadar, Durmitor',
+        text: 'Start in Kotor, continue through Lovcen and Lake Skadar, then drive north to Durmitor and Tara Canyon.'
+      },
+      coast: {
+        title: 'Kotor, Budva, Bar, Ulcinj',
+        text: 'Stay mostly on the Adriatic coast with old towns, beaches, seafood stops, and an easy side trip to Lake Skadar.'
+      },
+      nature: {
+        title: 'Lovcen, Lake Skadar, Durmitor',
+        text: 'Focus on viewpoints, boat trips, mountain roads, Black Lake, Tara Canyon, and slower scenic days.'
+      },
+      culture: {
+        title: 'Kotor, Cetinje, Ostrog, Stari Bar',
+        text: 'Link old towns, monasteries, royal history, fortress ruins, and traditional food stops.'
+      }
+    };
+
+    plannerForm?.addEventListener('submit', event => {
+      event.preventDefault();
+      const days = document.getElementById('tripDays').value;
+      const transport = document.getElementById('tripTransport').value;
+      const focus = document.getElementById('tripFocus').value;
+      const route = routes[focus] || routes.balanced;
+      const transportText = transport === 'car'
+        ? 'A rental car gives the smoothest version of this route.'
+        : 'Use buses between main towns and add transfers for lake or mountain stops.';
+      planResult.classList.remove('result-enter');
+      void planResult.offsetWidth;
+      planResult.classList.add('result-enter');
+      planResult.innerHTML = `<p class="text-sm font-extrabold uppercase tracking-widest text-[#0E6F8F]">Suggested ${days}-day route</p><h3 class="mt-2 text-2xl font-extrabold">${route.title}</h3><p class="story mt-2 text-sm leading-6 text-[#566367]">${route.text} ${transportText}</p>`;
+    });
+  </script>
 </body>
 </html>
