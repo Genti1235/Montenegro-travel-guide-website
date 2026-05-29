@@ -193,7 +193,7 @@
     const status = document.getElementById('searchStatus');
     const filterButtons = Array.from(document.querySelectorAll('.filter-btn'));
 
-    function runSearch(value) {
+    function runSearch(value, shouldScroll = false) {
       const query = value.trim().toLowerCase();
       let shown = 0;
       cards.forEach(card => {
@@ -203,19 +203,19 @@
         if (match) shown += 1;
       });
       status.textContent = query ? `Showing ${shown} result${shown === 1 ? '' : 's'} for "${query}".` : 'Showing all guide sections.';
-      document.getElementById('guide').scrollIntoView({behavior:'smooth', block:'start'});
+      if (shouldScroll) document.getElementById('guide').scrollIntoView({behavior:'smooth', block:'start'});
     }
 
     searchForm?.addEventListener('submit', event => {
       event.preventDefault();
-      runSearch(searchInput.value);
+      runSearch(searchInput.value, true);
     });
     searchInput?.addEventListener('input', () => runSearch(searchInput.value));
 
     filterButtons.forEach(button => {
       button.addEventListener('click', () => {
         searchInput.value = button.dataset.filter || '';
-        runSearch(searchInput.value);
+        runSearch(searchInput.value, true);
       });
     });
 
